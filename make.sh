@@ -38,11 +38,11 @@ echo "read the first https://www.jetbrains.com/upsource/help/2.0/prerequisites.h
 echo "install into /usr/jetbrains/upsource/"
 echo "====================================="
 echo
-echo "TeamCity"
-echo "download https://www.jetbrains.com/teamcity/download/"
-echo "read the first https://www.jetbrains.com/teamcity/help/2.0/prerequisites.html"
-echo "install into /usr/jetbrains/teamcity/"
-echo "====================================="
+#echo "TeamCity"
+#echo "download https://www.jetbrains.com/teamcity/download/"
+#echo "read the first https://www.jetbrains.com/teamcity/help/2.0/prerequisites.html"
+#echo "install into /usr/jetbrains/teamcity/"
+#echo "====================================="
 
 
 if [ "$preset" == "n" ]; then
@@ -120,10 +120,6 @@ read type
 if [ "$type" == "n" ]; then
   exit 0
 fi
-echo -n "Upsource domain url: "
-read us_domain
-echo -n "Upsource port: "
-read us_port
 
 
 code=`lsb_release -a | grep Codename | sed 's/[[:space:]]//g' | cut -f2 -d:`
@@ -189,12 +185,12 @@ mv Upsource/* ../upsource/
 chmod +x -R ../upsource/
 popd
 
-wget https://download.jetbrains.com/teamcity/TeamCity-2017.1.5.tar.gz
-tar -xzf TeamCity-10.0.4.tar.gz
-mv TeamCity /usr/jetbrains/teamcity
-pushd /usr/jetbrains/teamcity
-chown -R teamcity /usr/jetbrains/teamcity
-popd
+#wget https://download.jetbrains.com/teamcity/TeamCity-2017.1.5.tar.gz
+#tar -xzf TeamCity-10.0.4.tar.gz
+#mv TeamCity /usr/jetbrains/teamcity
+#pushd /usr/jetbrains/teamcity
+#chown -R teamcity /usr/jetbrains/teamcity
+#popd
 
 make_initd() {
   
@@ -293,8 +289,8 @@ make_initd hub
 echo
 make_initd upsource
 
-echo
-make_initd teamcity
+#echo
+#make_initd teamcity
 
 echo
 echo "configure nginx"
@@ -351,21 +347,6 @@ server {
 	}
 }
 server {
-	listen 80;
-	listen [::]:80;
-	server_name $tc_domain;
-	server_tokens off;
-	
-	location / {
-		proxy_set_header X-Forwarded-Host \$http_host;
-		proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-		proxy_set_header X-Forwarded-Proto \$scheme;
-		proxy_http_version 1.1;
-	
-		proxy_pass http://localhost:$tc_port/;
-	}
-}
-server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
 	root /var/www/html;
@@ -398,7 +379,7 @@ done
 service youtrack start
 service upsource start
 service hub start
-service teamcity start
+#service teamcity start
 exit 0
 EOF
 
@@ -417,15 +398,15 @@ service teamcity stop
 /usr/jetbrains/hub/bin/hub.sh configure --listen-port $hub_port --base-url http://$hub_domain
 /usr/jetbrains/youtrack/bin/youtrack.sh configure --listen-port $yt_port --base-url http://$yt_domain
 /usr/jetbrains/upsource/bin/upsource.sh configure --listen-port $us_port --base-url http://$us_domain
-/usr/jetbrains/teamcity/bin/teamcity.sh configure --listen-port $tc_port --base-url http://$tc_domain
+#/usr/jetbrains/teamcity/bin/teamcity.sh configure --listen-port $tc_port --base-url http://$tc_domain
 
 service hub start
 service youtrack start
 service upsource start
-service teamcity start
+#service teamcity start
 
 echo "goto setup"
 echo $hub_domain
 echo $yt_domain
 echo $us_domain
-echo $tc_domain
+#echo $tc_domain
