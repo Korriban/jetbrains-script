@@ -1,19 +1,5 @@
 #!/bin/bash
 
-#presets (comment this out to assign it yourself during install)
-preset="n"
-base_domain="http://nerys.io"
-hub_domain="http://nerys.io/hub"
-us_domain="http://nerys.io/source"
-yt_domain="http://nerys.io/track"
-tc_domain="http://nerys.io/team"
-hub_port="8100
-us_port="8101"
-yt_port="8111"
-tc_port="8011"
-cron_email="admin@irae.io"
-
-
 apt-get install mc htop git unzip wget curl -y
 
 echo
@@ -160,9 +146,7 @@ echo
 mkdir -p /usr/jetbrains/{youtrack,hub,upsource}
 
 wget https://download.jetbrains.com/hub/2017.4/hub-ring-bundle-2017.4.7722.zip -O /usr/jetbrains/hub/arch.zip 
-
 wget https://download.jetbrains.com/charisma/youtrack-2017.3.37517.zip -O /usr/jetbrains/youtrack/arch.zip
-
 wget https://download.jetbrains.com/upsource/upsource-2017.2.2398.zip -O /usr/jetbrains/upsource/arch.zip
 
 pushd /usr/jetbrains/hub
@@ -200,12 +184,15 @@ make_initd() {
 # Short-Description: initscript for $1
 # Description:       initscript for $1
 ### END INIT INFO
+
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 NAME=$1
 SCRIPT=/usr/jetbrains/\$NAME/bin/\$NAME.sh
+
 do_start() {
   \$SCRIPT start soft
 }
+
 case "\$1" in
   start)
     do_start
@@ -218,6 +205,7 @@ case "\$1" in
     exit 1
     ;;
 esac
+
 exit 0
 EOF
   
@@ -247,6 +235,7 @@ cat >./default<<EOF
 server {
 	listen 80;
 	listen [::]:80;
+
 	server_name $yt_domain;
 	server_tokens off;
 	
@@ -259,9 +248,11 @@ server {
 		proxy_pass http://localhost:$yt_port/;
 	}
 }
+
 server {
 	listen 80;
 	listen [::]:80;
+
 	server_name $us_domain;
 	server_tokens off;
 	
@@ -277,9 +268,11 @@ server {
 		proxy_pass http://localhost:$us_port/;
 	}
 }
+
 server {
 	listen 80;
 	listen [::]:80;
+
 	server_name $hub_domain;
 	server_tokens off;
 	
@@ -292,11 +285,15 @@ server {
 		proxy_pass http://localhost:$hub_port/;
 	}
 }
+
 server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
+
 	root /var/www/html;
+
 	index index.html index.htm index.nginx-debian.html;
+
 	server_name $base_domain;
 	server_tokens off;
 	
@@ -315,6 +312,7 @@ mkdir -p /root/crons
 
 cat >/root/crons/jetbrains<<EOF
 #!/bin/bash
+
 status=404
 while [ \$status -eq 404 ]; do
   echo "wait hub..."
@@ -322,8 +320,10 @@ while [ \$status -eq 404 ]; do
   status=\`curl -s -o /dev/null -w "%{http_code}" http://$hub_domain/hub\`
   echo "hub status \$status"
 done
+
 service youtrack start
 service upsource start
+
 exit 0
 EOF
 
