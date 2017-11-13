@@ -1,5 +1,18 @@
 #!/bin/bash
 
+#presets (comment this out to assign it yourself during install)
+preset = 'y'
+base_domain = "http://nerys.io"
+hub_domain = "http://nerys.io/hub"
+us_domain = "http://nerys.io/source"
+yt_domain = "http://nerys.io/track"
+tc_domain = "http://nerys.io/team"
+hub_port = 8100
+us_port = 8101
+yt_port = 8111
+tc_port = 8011
+cron_email = "admin@irae.io"
+
 apt-get install mc htop git unzip wget curl -y
 
 echo
@@ -40,34 +53,36 @@ if [ "$type" == "n" ]; then
   exit 0
 fi
 
-echo "==================================="
-echo "In order to continue installing need set a few properties for nginx:"
+if ["$preset" != 'y']; then
+	echo "==================================="
+	echo "In order to continue installing need set a few properties for nginx:"
 
-echo -n "Base domain url: "
-read base_domain
+	echo -n "Base domain url: "
+	read base_domain
 
-echo -n "Hub domain url: "
-read hub_domain
-echo -n "hub port: "
-read hub_port
+	echo -n "Hub domain url: "
+	read hub_domain
+	echo -n "hub port: "
+	read hub_port
 
-echo -n "Youtrack domain url: "
-read yt_domain
-echo -n "Youtrack port: "
-read yt_port
+	echo -n "Youtrack domain url: "
+	read yt_domain
+	echo -n "Youtrack port: "
+	read yt_port
 
-echo -n "Upsource domain url: "
-read us_domain
-echo -n "Upsource port: "
-read us_port
+	echo -n "Upsource domain url: "
+	read us_domain
+	echo -n "Upsource port: "
+	read us_port
 
-echo -n "Teamcity domain url: "
-read tc_domain
-echo -n "Teamcity port: "
-read tc_port
+	echo -n "Teamcity domain url: "
+	read tc_domain
+	echo -n "Teamcity port: "
+	read tc_port
 
-echo -n "Cron email: "
-read $cron_email
+	echo -n "Cron email: "
+	read cron_email
+fi
 
 print_params() {
 	echo "================="
@@ -79,7 +94,7 @@ print_params() {
 	echo "Youtrack port: $yt_port"
 	echo "Upsource domain url: $us_domain"
 	echo "Upsource port: $us_port"
-  echo "Teamcity domain url: $tc_domain"
+  	echo "Teamcity domain url: $tc_domain"
 	echo "Teamcity port: $tc_port"
 	echo "Cron email: $cron_email"
 	echo
@@ -96,9 +111,11 @@ echo "================="
 echo
 echo "Base domain url: $base_domain"
 echo "Hub domain url: $hub_domain"
-echo "hub port: $hub_port"
+echo "Hub port: $hub_port"
 echo "Youtrack domain url: $yt_domain"
 echo "Youtrack port: $yt_port"
+echo "Upsource domain url: $us_domain"
+echo "Upsource port: $us_port"
 echo "Teamcity domain url: $tc_domain"
 echo "Teamcity port: $tc_port"
 echo "Cron email: $cron_email"
@@ -111,6 +128,10 @@ read type
 if [ "$type" == "n" ]; then
   exit 0
 fi
+echo -n "Upsource domain url: "
+read us_domain
+echo -n "Upsource port: "
+read us_port
 
 
 code=`lsb_release -a | grep Codename | sed 's/[[:space:]]//g' | cut -f2 -d:`
@@ -123,39 +144,34 @@ echo
 mkdir -p /var/tmp
 pushd /var/tmp
 
-echo -n "Do you want to skip the Java installation? [Y|n]"
-read type
+echo
+echo "Installing Java JDK 1.8"
+echo
 
-if [ "$type" == "n" ]; then
+if [ "$code" != "jessie" ]; then
+  echo "from oracle site"
   echo
-  echo "Installing Java JDK 1.8"
-  echo
+  url=http://download.oracle.com/otn-pub/java/jdk/8u60-b27/
+  java_version=jdk-8u60-linux-x64.tar.gz
+  
+  wget -c -O "$java_version" --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" "$url$java_version"
+  
+  mkdir -p /opt/jdk
+  
+  tar -zxf $java_version -C /opt/jdk
+  
+  update-alternatives --install /usr/bin/java java /opt/jdk/jdk1.8.0_60/bin/java 100
+  update-alternatives --install /usr/bin/javac javac /opt/jdk/jdk1.8.0_60/bin/javac 100
+else
+  apt-get install java8-jdk -y
+fi;
 
-  if [ "$code" != "jessie" ]; then
-    echo "from oracle site"
-    echo
-    url=http://download.oracle.com/otn-pub/java/jdk/8u151-b27/
-    java_version=jdk-8u151-linux-x64.tar.gz
-  
-    wget -c -O "$java_version" --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" "$url$java_version"
-  
-    mkdir -p /opt/jdk
-  
-    tar -zxf $java_version -C /opt/jdk
-  
-    update-alternatives --install /usr/bin/java java /opt/jdk/jdk1.8.0_151/bin/java 100
-    update-alternatives --install /usr/bin/javac javac /opt/jdk/jdk1.8.0_151/bin/javac 100
-  else
-    apt-get install java8-jdk -y
-  fi;
-
-  echo
-  java -version
-  update-alternatives --display java
-  javac -version
-  update-alternatives --display javac
-  echo
-fi
+echo
+java -version
+update-alternatives --display java
+javac -version
+update-alternatives --display javac
+echo
 
 
 
