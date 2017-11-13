@@ -409,6 +409,7 @@ service teamcity stop
 /usr/jetbrains/hub/bin/hub.sh configure --listen-port $hub_port --base-url http://$hub_domain
 /usr/jetbrains/youtrack/bin/youtrack.sh configure --listen-port $yt_port --base-url http://$yt_domain
 /usr/jetbrains/upsource/bin/upsource.sh configure --listen-port $us_port --base-url http://$us_domain
+/usr/jetbrains/teamcity/bin/teamcity.sh configure --listen-port $tc_port --base-url http://$tc_domain
 
 service hub start
 service youtrack start
