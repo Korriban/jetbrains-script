@@ -7,10 +7,10 @@ hub_domain = "http://nerys.io/hub"
 us_domain = "http://nerys.io/source"
 yt_domain = "http://nerys.io/track"
 tc_domain = "http://nerys.io/team"
-hub_port = 8100
-us_port = 8101
-yt_port = 8111
-tc_port = 8011
+hub_port = "8100"
+us_port = "8101"
+yt_port = "8111"
+tc_port = "8011"
 cron_email = "admin@irae.io"
 
 apt-get install mc htop git unzip wget curl -y
@@ -102,7 +102,7 @@ print_params() {
 }
 
 if [ "$base_domain" == "" ] || [ "$hub_domain" == "" ] || [ "$hub_port" == "" ] || [ "$yt_domain" == "" ] || [ "$yt_port" == "" ] || [ "$us_domain" == "" ] || [ "$us_port" == "" ] ||[ "$tc_domain" == "" ] || [ "$tc_port" == "" ]; then
-  echo "You have mistake into parameters!"
+  echo "Some parameters are not right somewhere... lol :D"
   exit 1
 fi
 
