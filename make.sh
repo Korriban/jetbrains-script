@@ -1,17 +1,17 @@
 #!/bin/bash
 
 #presets (comment this out to assign it yourself during install)
-preset = 'y'
-base_domain = "http://nerys.io"
-hub_domain = "http://nerys.io/hub"
-us_domain = "http://nerys.io/source"
-yt_domain = "http://nerys.io/track"
-tc_domain = "http://nerys.io/team"
-hub_port = "8100"
-us_port = "8101"
-yt_port = "8111"
-tc_port = "8011"
-cron_email = "admin@irae.io"
+preset="y"
+base_domain="http://nerys.io"
+hub_domain="http://nerys.io/hub"
+us_domain="http://nerys.io/source"
+yt_domain="http://nerys.io/track"
+tc_domain="http://nerys.io/team"
+hub_port="8100"
+us_port="8101"
+yt_port="8111"
+tc_port="8011"
+cron_email="admin@irae.io"
 
 apt-get install mc htop git unzip wget curl -y
 
@@ -44,14 +44,6 @@ echo "read the first https://www.jetbrains.com/teamcity/help/2.0/prerequisites.h
 echo "install into /usr/jetbrains/teamcity/"
 echo "====================================="
 
-type="y"
-echo "Y - will be installing in the auto mode: download all needs, config nginx and others"
-echo -n "Do you want to continue? [Y|n]: "
-read type
-
-if [ "$type" == "n" ]; then
-  exit 0
-fi
 
 if [ "$preset" == "n" ]; then
 	echo "==================================="
@@ -101,7 +93,7 @@ print_params() {
 	echo "================="
 }
 
-if [ "$base_domain" == "" ] || [ "$hub_domain" == "" ] || [ "$hub_port" == "" ] || [ "$yt_domain" == "" ] || [ "$yt_port" == "" ] || [ "$us_domain" == "" ] || [ "$us_port" == "" ] ||[ "$tc_domain" == "" ] || [ "$tc_port" == "" ]; then
+if [ "$base_domain" == "" ] || [ "$hub_domain" == "" ] || [ "$hub_port" == "" ] || [ "$yt_domain" == "" ] || [ "$yt_port" == "" ] || [ "$us_domain" == "" ] || [ "$us_port" == "" ] || [ "$tc_domain" == "" ] || [ "$tc_port" == "" ]; then
   echo "Some parameters are not right somewhere... lol :D"
   exit 1
 fi
