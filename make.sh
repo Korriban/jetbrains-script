@@ -114,13 +114,6 @@ echo "Cron email: $cron_email"
 echo
 echo "================="
 
-echo -n "Do you continue? [Y|n]"
-read type
-
-if [ "$type" == "n" ]; then
-  exit 0
-fi
-
 
 code=`lsb_release -a | grep Codename | sed 's/[[:space:]]//g' | cut -f2 -d:`
 
@@ -184,13 +177,7 @@ unzip arch.zip
 mv Upsource/* ../upsource/
 chmod +x -R ../upsource/
 popd
-
-#wget https://download.jetbrains.com/teamcity/TeamCity-2017.1.5.tar.gz
-#tar -xzf TeamCity-10.0.4.tar.gz
-#mv TeamCity /usr/jetbrains/teamcity
-#pushd /usr/jetbrains/teamcity
-#chown -R teamcity /usr/jetbrains/teamcity
-#popd
+popd
 
 make_initd() {
   
@@ -241,45 +228,6 @@ EOF
   fi
 }
 
-make_initd_tc() {
-  cat >/etc/init.d/$1 <<EOF
-  #!/bin/sh
-### BEGIN INIT INFO
-# Provides:          TeamCity autostart
-# Required-Start:    $remote_fs $syslog
-# Required-Stop:     $remote_fs $syslog
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: Start teamcity daemon at boot time
-# Description:       Enable service provided by daemon.
-# /etc/init.d/teamcity -  startup script for teamcity
-### END INIT INFO
- 
- 
-#  Ensure you enter the  right  user name that  TeamCity will run  under
-USER="teamcity"
- 
-export TEAMCITY_DATA_PATH="/usr/jetbrains/teamcity/.BuildServer"
- 
-case $1 in 
-start)
-  start-stop-daemon --start  -c $USER --exec /opt/JetBrains/TeamCity/bin/runAll.sh start
- ;;
-stop)
-  start-stop-daemon --start -c $USER  --exec  /opt/JetBrains/TeamCity/bin/runAll.sh stop
- ;;
- esac
- 
-exit 0
-EOF
-chmod +x /etc/init.d/teamcity
-update-rc.d teamcity defaults
-mkdir /opt/jetbrains/teamcity/.BuildServer/lib/jdbc
-pushd /opt/jetbrains/teamcity/.BuildServer/lib/jdbc
-wget https://jdbc.postgresql.org/download/postgresql-9.4.1212.jar
-}
-
-
 echo
 make_initd youtrack
 
@@ -288,9 +236,6 @@ make_initd hub
 
 echo
 make_initd upsource
-
-#echo
-#make_initd teamcity
 
 echo
 echo "configure nginx"
@@ -378,8 +323,6 @@ while [ \$status -eq 404 ]; do
 done
 service youtrack start
 service upsource start
-service hub start
-#service teamcity start
 exit 0
 EOF
 
@@ -393,20 +336,16 @@ crontab /tmp/cron_
 service upsource stop
 service youtrack stop
 service hub stop
-service teamcity stop
 
 /usr/jetbrains/hub/bin/hub.sh configure --listen-port $hub_port --base-url http://$hub_domain
 /usr/jetbrains/youtrack/bin/youtrack.sh configure --listen-port $yt_port --base-url http://$yt_domain
 /usr/jetbrains/upsource/bin/upsource.sh configure --listen-port $us_port --base-url http://$us_domain
-#/usr/jetbrains/teamcity/bin/teamcity.sh configure --listen-port $tc_port --base-url http://$tc_domain
 
 service hub start
 service youtrack start
 service upsource start
-#service teamcity start
 
 echo "goto setup"
 echo $hub_domain
 echo $yt_domain
 echo $us_domain
-#echo $tc_domain
