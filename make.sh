@@ -53,7 +53,7 @@ if [ "$type" == "n" ]; then
   exit 0
 fi
 
-if ["$preset" != 'y']; then
+if ["$preset" == "n" ]; then
 	echo "==================================="
 	echo "In order to continue installing need set a few properties for nginx:"
 
