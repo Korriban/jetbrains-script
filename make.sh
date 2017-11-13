@@ -286,7 +286,7 @@ echo
 make_initd upsource
 
 echo
-make_initd_tc
+make_initd teamcity
 
 echo
 echo "configure nginx"
