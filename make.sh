@@ -1,17 +1,18 @@
 #!/bin/bash
 
 #presets (comment this out to assign it yourself during install)
-preset="y"
+preset="n"
 base_domain="http://nerys.io"
 hub_domain="http://nerys.io/hub"
 us_domain="http://nerys.io/source"
 yt_domain="http://nerys.io/track"
 tc_domain="http://nerys.io/team"
-hub_port="8100"
+hub_port="8100
 us_port="8101"
 yt_port="8111"
 tc_port="8011"
 cron_email="admin@irae.io"
+
 
 apt-get install mc htop git unzip wget curl -y
 
@@ -38,43 +39,39 @@ echo "read the first https://www.jetbrains.com/upsource/help/2.0/prerequisites.h
 echo "install into /usr/jetbrains/upsource/"
 echo "====================================="
 echo
-#echo "TeamCity"
-#echo "download https://www.jetbrains.com/teamcity/download/"
-#echo "read the first https://www.jetbrains.com/teamcity/help/2.0/prerequisites.html"
-#echo "install into /usr/jetbrains/teamcity/"
-#echo "====================================="
 
+type="y"
+echo "Y - will be installing in the auto mode: download all needs, config nginx and others"
+echo -n "Do you want to continue? [Y|n]: "
+read type
 
-if [ "$preset" == "n" ]; then
-	echo "==================================="
-	echo "In order to continue installing need set a few properties for nginx:"
-
-	echo -n "Base domain url: "
-	read base_domain
-
-	echo -n "Hub domain url: "
-	read hub_domain
-	echo -n "hub port: "
-	read hub_port
-
-	echo -n "Youtrack domain url: "
-	read yt_domain
-	echo -n "Youtrack port: "
-	read yt_port
-
-	echo -n "Upsource domain url: "
-	read us_domain
-	echo -n "Upsource port: "
-	read us_port
-
-	echo -n "Teamcity domain url: "
-	read tc_domain
-	echo -n "Teamcity port: "
-	read tc_port
-
-	echo -n "Cron email: "
-	read cron_email
+if [ "$type" == "n" ]; then
+  exit 0
 fi
+
+echo "==================================="
+echo "In order to continue installing need set a few properties for nginx:"
+
+echo -n "Base domain url: "
+read base_domain
+
+echo -n "Hub domain url: "
+read hub_domain
+echo -n "hub port: "
+read hub_port
+
+echo -n "Youtrack domain url: "
+read yt_domain
+echo -n "Youtrack port: "
+read yt_port
+
+echo -n "Upsource domain url: "
+read us_domain
+echo -n "Upsource port: "
+read us_port
+
+echo -n "Cron email: "
+read $cron_email
 
 print_params() {
 	echo "================="
@@ -86,15 +83,13 @@ print_params() {
 	echo "Youtrack port: $yt_port"
 	echo "Upsource domain url: $us_domain"
 	echo "Upsource port: $us_port"
-  	echo "Teamcity domain url: $tc_domain"
-	echo "Teamcity port: $tc_port"
 	echo "Cron email: $cron_email"
 	echo
 	echo "================="
 }
 
-if [ "$base_domain" == "" ] || [ "$hub_domain" == "" ] || [ "$hub_port" == "" ] || [ "$yt_domain" == "" ] || [ "$yt_port" == "" ] || [ "$us_domain" == "" ] || [ "$us_port" == "" ] || [ "$tc_domain" == "" ] || [ "$tc_port" == "" ]; then
-  echo "Some parameters are not right somewhere... lol :D"
+if [ "$base_domain" == "" ] || [ "$hub_domain" == "" ] || [ "$hub_port" == "" ] || [ "$yt_domain" == "" ] || [ "$yt_port" == "" ] || [ "$us_domain" == "" ] || [ "$us_port" == "" ]; then
+  echo "You have mistake into parameters!"
   exit 1
 fi
 
@@ -103,16 +98,24 @@ echo "================="
 echo
 echo "Base domain url: $base_domain"
 echo "Hub domain url: $hub_domain"
-echo "Hub port: $hub_port"
+echo "hub port: $hub_port"
 echo "Youtrack domain url: $yt_domain"
 echo "Youtrack port: $yt_port"
-echo "Upsource domain url: $us_domain"
-echo "Upsource port: $us_port"
-echo "Teamcity domain url: $tc_domain"
-echo "Teamcity port: $tc_port"
 echo "Cron email: $cron_email"
 echo
 echo "================="
+
+echo -n "Do you continue? [Y|n]"
+read type
+
+if [ "$type" == "n" ]; then
+  exit 0
+fi
+
+echo -n "Upsource domain url: "
+read us_domain
+echo -n "Upsource port: "
+read us_port
 
 
 code=`lsb_release -a | grep Codename | sed 's/[[:space:]]//g' | cut -f2 -d:`
@@ -154,9 +157,7 @@ javac -version
 update-alternatives --display javac
 echo
 
-
-
-mkdir -p /usr/jetbrains/{youtrack,hub,upsource,teamcity}
+mkdir -p /usr/jetbrains/{youtrack,hub,upsource}
 
 wget https://download.jetbrains.com/hub/2017.4/hub-ring-bundle-2017.4.7722.zip -O /usr/jetbrains/hub/arch.zip 
 
